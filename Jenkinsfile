@@ -31,9 +31,9 @@ def check_test_results(String path) {
 
 
 pipeline {
-agent{
-label "agent"
-}
+    agent{
+    label "agent"
+    }
     Map started_by = utils.get_started_by()
     String ulink = "<@${started_by['userId']}>"
     String jlink = "(<${env.BUILD_URL}|Open>)"
@@ -127,48 +127,48 @@ label "agent"
             withCredentials([ // Use Jenkins credentials ID of artifactory
                 [$class: 'UsernamePasswordMultiBinding', credentialsId: artifactory_creds, usernameVariable: 'A_USER', passwordVariable: 'A_PASS'],
                 ]){
-                    run_in_stage('Gradle Clean', {
+                    stage('Gradle Clean'){
                         sh """
                         export HOME=$GRADLE_USER_HOME
                         export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
                         ./gradlew clean
                         """
-                    })
+                    }
 
-                    run_in_stage('Lint run', {
+                    stage('Lint run') {
                         sh """
                             export HOME=$GRADLE_USER_HOME
                             export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
                             ./gradlew lint${BUILDFLAV}${BUILDTYPE} -x lint
                         """
-                    })
+                    }
 
-                    run_in_stage('Compilation', {
+                    stage('Compilation'){
                         sh """
                             export HOME=$GRADLE_USER_HOME
                             export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
                             ./gradlew compile${BUILDFLAV}${BUILDTYPE}Sources -x lint
                         """
-                    })
+                    }
 
-                    run_in_stage('Unit Test', {
+                    stage('Unit Test') {
                         sh """
                             export HOME=$GRADLE_USER_HOME
                             export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
                             ./gradlew test${BUILDFLAV}${BUILDTYPE}UnitTest -x lint
                         """
-                    })
+                    }
 
-                    run_in_stage("Assembling apk", {
+                    stage("Assembling apk"){
                         sh """
                         export HOME=$GRADLE_USER_HOME
                         export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
                         VERSION=\$(git tag | grep '^[0-9]' | tail -1)
                         ./gradlew -DBUILD_FLAVOR=${BUILDFLAV} -DUSE_OLD_BUILD_PROCESS=false -DCORE_BRANCH=NONE -DVERSION_NAME='\$VERSION' -DBUILD_TYPE=${BUILDTYPE} -DGIT_BRANCH=origin/master -DANDROID_VIEWS_BRANCH= assemble${BUILDFLAV}${BUILDTYPE}
                         """
-                    })
+                    }
 
-                    run_in_stage('Post steps', {
+                    stage('Post steps'){
                         sh """
                             # Add libCore.so files to symbols.zip
                             find ${cwd}/Product-CoreSDK/obj/local -name libCore.so | zip -r ${cwd}/Product/build/outputs/symbols.zip -@
@@ -176,7 +176,7 @@ label "agent"
                             # Remove unaligned apk's
                             rm -f ${cwd}/Product/build/outputs/apk/*-unaligned.apk
                         """
-                    })
+                    }
                 }
         }
     }
