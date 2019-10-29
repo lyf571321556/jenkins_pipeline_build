@@ -121,44 +121,6 @@ label "agent"
         }
     }
 
-    // Branch selection
-    switch(BRANCH_NAME) {
-        case "develop":
-            BUILDFLAV = "Staging"
-            BUILDTYPE = "Debug"
-            ARTIFACT_NAME = "Product-${BUILDFLAV.toLowerCase()}-${BUILDTYPE.toLowerCase()}.apk"
-            break
-        case "master":
-            BUILDFLAV = "Production"
-            BUILDTYPE = "Release"
-            ARTIFACT_NAME = "Product-${BUILDFLAV.toLowerCase()}-${BUILDTYPE.toLowerCase()}.apk"
-            break
-        case "release_candidate":
-            ARTIFACT_NAME = "Product-${BUILDFLAV.toLowerCase()}-${BUILDTYPE.toLowerCase()}.apk"
-            break
-        case "hotfix":
-            ARTIFACT_NAME = "Product-${BUILDFLAV.toLowerCase()}-${BUILDTYPE.toLowerCase()}.apk"
-            break
-        case "jenkins-pipeline":
-            BUILDFLAV = "Staging"
-            BUILDTYPE = "Debug"
-            ARTIFACT_NAME = "Product-${BUILDFLAV.toLowerCase()}-${BUILDTYPE.toLowerCase()}.apk"
-            break
-        case "feature/google_sdk_mgmt":
-            BUILDFLAV = "Staging"
-            BUILDTYPE = "Debug"
-            ARTIFACT_NAME = "Product-${BUILDFLAV.toLowerCase()}-${BUILDTYPE.toLowerCase()}.apk"
-            break
-        case "feature/notifications":
-            BUILDFLAV = "Staging"
-            BUILDTYPE = "Debug"
-            ARTIFACT_NAME = "Product-${BUILDFLAV.toLowerCase()}-${BUILDTYPE.toLowerCase()}.apk"
-            break
-        default:
-            println "Branch name was not set!"
-            break
-    }
-
         stage('Docker image building'){
         java = docker.build 'openjdk8:android'
         java.inside("-e ANDROID_SDK_HOME=${GRADLE_USER_HOME}/android-sdk-linux -e ANDROID_HOME=${GRADLE_USER_HOME}/android-sdk-linux" ) {
