@@ -123,8 +123,8 @@ pipeline {
     }
 
         stage('Docker image building'){
-        java = docker.build 'openjdk8:android'
-        java.inside("-e ANDROID_SDK_HOME=${GRADLE_USER_HOME}/android-sdk-linux -e ANDROID_HOME=${GRADLE_USER_HOME}/android-sdk-linux" ) {
+        //java = docker.build 'openjdk8:android'
+        docker.image("openjdk8:android").withRun("-e ANDROID_SDK_HOME=${GRADLE_USER_HOME}/android-sdk-linux -e ANDROID_HOME=${GRADLE_USER_HOME}/android-sdk-linux") {
             withCredentials([ // Use Jenkins credentials ID of artifactory
                 [$class: 'UsernamePasswordMultiBinding', credentialsId: artifactory_creds, usernameVariable: 'A_USER', passwordVariable: 'A_PASS'],
                 ]){
