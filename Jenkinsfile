@@ -35,7 +35,8 @@ pipeline {
     label "agent"
     }
     Map started_by = utils.get_started_by()
-    String ulink = "<@${started_by['userId']}>"
+    //<@${started_by['userId']}>*
+    String ulink = "test";
     String jlink = "(<${env.BUILD_URL}|Open>)"
 
     stage('Git clean, Checkout SCM'){
