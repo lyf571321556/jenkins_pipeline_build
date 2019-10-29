@@ -24,7 +24,7 @@ pipeline {
 	])])
 
 	echo 'check代码获取主版本号'
-        checkout([$class: 'GitSCM', branches: [[name: 'master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'xxx', url: 'http://0.0.0.0:9087/xxxx_Android.git']]])
+        checkout([$class: 'GitSCM', branches: [[name: 'master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'one-ai-android', url: 'http://0.0.0.0:9087/xxxx_Android.git']]])
 
     def BUILD_VERSION = version()
     if (BUILD_VERSION) {
