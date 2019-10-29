@@ -38,10 +38,10 @@ label "agent"
     String ulink = "<@${started_by['userId']}>"
     String jlink = "(<${env.BUILD_URL}|Open>)"
 
-    run_in_stage('Git clean, Checkout SCM', {
+    stage('Git clean, Checkout SCM'){
         sh '( git reset --hard; git clean -fxd --exclude=".gradle" ; git tag -d $(git tag) ) &>/dev/null || true'
         checkout scm
-    })
+    }
 
     def cwd = pwd()
 
@@ -119,7 +119,7 @@ label "agent"
                 # wget --auth-no-challenge --user=\${A_USER} --password=\${A_PASS} https://artifactory.visualtao.net/android-tmp/m2repository.tar.gz -O -| tar zfxv - -C "${ANDROID_HOME}/extras/"
             """
         }
-    })
+    }
 
     // Branch selection
     switch(BRANCH_NAME) {
@@ -217,11 +217,11 @@ label "agent"
                     })
                 }
         }
-    })
+    }
 
     stage('Test results processing'){
         check_test_results('**/build/test-results/**/*.xml')
-    })
+    }
 
     stage('Archive artifacts'){
         if( "${BUILDFLAV}" == 'Production'){
@@ -231,7 +231,7 @@ label "agent"
         step([$class: 'ArtifactArchiver', artifacts: '**/build/outputs/apk/*.apk', fingerprint: false])
         step([$class: 'ArtifactArchiver', artifacts: '**/build/outputs/symbols.zip', fingerprint: false])
         step([$class: 'JUnitResultArchiver', testResults: '**/build/test-results/**/*.xml', fingerprint: false])
-    })
+    }
 
     /*
     stage('Mixpanel annotation'){
@@ -253,7 +253,7 @@ label "agent"
             CURL_COMMAND="\$MP_BASE_URL\$REQUEST_URL_NO_SPACE&sig=\$SIGNATURE"
             curl -v \$CURL_COMMAND
         """
-    })
+    }
     */
 
     if (currentBuild.result == 'SUCCESS') {
