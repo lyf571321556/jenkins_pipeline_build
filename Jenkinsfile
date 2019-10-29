@@ -4,14 +4,9 @@ def git_creds = 'company_svc_c_jenkins_ssh_key'
 def artifactory_creds = 'company_artifactory_jenkins_creds'
 def mp_api_key = '17298f767ae7a866e0363776e5ZZZZZZ'
 def mp_api_secret = '58eec9da7fd8fe6f30bc9XXXXXX'
-def utils, artifacory
 @Field def sendTo = 'itai.ganot@company.com'
 @Field def channel = '#slack-test'
 
-fileLoader.withGit('git@git.company.com:Product/pipeline-scripts.git', 'master', git_creds, ''){
-    utils = fileLoader.load('utils.groovy');
-    artifactory = fileLoader.load('artifactory.groovy');
-}
 
 def check_test_results(String path) {
     try {
@@ -34,11 +29,11 @@ def check_test_results(String path) {
     }
 }
 
-def run_in_stage(String stage_name, Closure command) {
-    utils.run_in_stage(stage_name, command, sendTo, channel)
-}
 
-node ('master') {
+pipeline {
+agent{
+label "agent"
+}
     Map started_by = utils.get_started_by()
     String ulink = "<@${started_by['userId']}>"
     String jlink = "(<${env.BUILD_URL}|Open>)"
@@ -50,7 +45,7 @@ node ('master') {
 
     def cwd = pwd()
 
-    run_in_stage('Environement preparation', {
+    stage('Environement preparation') {
         // Build parameters
         NDK_VER="r12b"
         SDK_VER="r24.4.1"
@@ -164,7 +159,7 @@ node ('master') {
             break
     }
 
-        run_in_stage('Docker image building', {
+        stage('Docker image building'){
         java = docker.build 'openjdk8:android'
         java.inside("-e ANDROID_SDK_HOME=${GRADLE_USER_HOME}/android-sdk-linux -e ANDROID_HOME=${GRADLE_USER_HOME}/android-sdk-linux" ) {
             withCredentials([ // Use Jenkins credentials ID of artifactory
@@ -224,11 +219,11 @@ node ('master') {
         }
     })
 
-    run_in_stage('Test results processing', {
+    stage('Test results processing'){
         check_test_results('**/build/test-results/**/*.xml')
     })
 
-    run_in_stage('Archive artifacts', {
+    stage('Archive artifacts'){
         if( "${BUILDFLAV}" == 'Production'){
             step([$class: 'ArtifactArchiver', artifacts: "**/build/outputs/mapping/production/release/mapping.txt", fingerprint: false])
         }
@@ -239,7 +234,7 @@ node ('master') {
     })
 
     /*
-    run_in_stage('Mixpanel annotation', {
+    stage('Mixpanel annotation'){
         sh """
             MP_API_KEY=${mp_api_key}
             MP_API_SECRET=${mp_api_secret}
