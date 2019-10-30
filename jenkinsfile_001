@@ -52,7 +52,7 @@ node('master') {
     stage('Environement preparation'){
      // Build parameters
      NDK_VER="r12b"
-     SDK_TOOL_VER="r24.4.1"
+     SDK_VER="r24.4.1"
      GRADLE_USER_HOME="${HOME}/caches/.gradle"
      NDK_DIR="${GRADLE_USER_HOME}/android-ndk-${NDK_VER}"
      ANDROID_HOME="${GRADLE_USER_HOME}/android-sdk-linux"
@@ -65,7 +65,7 @@ node('master') {
                 export PATH="\$PATH:${GRADLE_USER_HOME}:${NDK_DIR}:${ANDROID_HOME}:${SDK_TOOLS}:${SDK_TOOLS}/bin:${AAPT}"
 
                 # Checking that Android SDK and NDK are installed
-                rm -rf ${GRADLE_USER_HOME}
+                # rm -rf ${GRADLE_USER_HOME}
                 mkdir -p ${GRADLE_USER_HOME}
                 if [ ! -f "${GRADLE_USER_HOME}/android-sdk-${SDK_VER}-linux.tgz" ]; then
                     curl -o "${GRADLE_USER_HOME}/android-sdk-${SDK_VER}-linux.tgz" https://dl.google.com/android/android-sdk_${SDK_VER}-linux.tgz
@@ -86,28 +86,29 @@ node('master') {
                     mkdir "${GRADLE_USER_HOME}/android-sdk-linux/extras"
                 fi
 
-                #Configuring path to ndk and sdk dir - as required by Gradle
+                # Configuring path to ndk and sdk dir - as required by Gradle
                 printf "ndk.dir=$NDK_DIR\nsdk.dir=$ANDROID_HOME" > "$cwd/local.properties"
                 cp "$cwd/local.properties" "$cwd/Product-AndroidSDK"
                 cp "$cwd/local.properties" "$cwd/Product-ServicesSDK"
                 cp "$cwd/local.properties" "$cwd/Product-CoreSDK"
 
                 # Creates licenses folder which will include the signed licenses for google sdk packages
-                if [ ! -d ${ANDROID_HOME}/licenses ]; then
-                mkdir "${ANDROID_HOME}/licenses"
-                fi
+                mkdir -p "${ANDROID_HOME}/licenses"
 
+                echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55\nd56f5187479451eabf01fb78af6dfcb131a6481e\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > "${ANDROID_HOME}/licenses/android-sdk-license"
 
-
-                echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > "${ANDROID_HOME}/licenses/android-sdk-license"
                 echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "${ANDROID_HOME}/licenses/android-sdk-preview-license"
 
-                #sdkmanager --update && yes | sdkmanager --licenses
-                #echo "y" | android --update
-                #echo "y" | android --licenses
+                echo -e "\nd975f751698a77b662f1254ddbeed3901e976f5a" > "${ANDROID_HOME}/licenses/intel-android-extra-license"
 
-                cat "${ANDROID_HOME}/licenses/android-sdk-license"
-                cat "${ANDROID_HOME}/licenses/android-sdk-preview-license"
+
+                mkdir -p "${ANDROID_HOME}/.android"
+
+                touch "${ANDROID_HOME}/.android/repositories.cfg"
+
+                # sdkmanager --update && yes | sdkmanager --licenses
+                # echo "y" | android --update
+                # echo "y" | android --licenses
 
                 cat "${ANDROID_HOME}/licenses/android-sdk-license"
                 cat "${ANDROID_HOME}/licenses/android-sdk-preview-license"
@@ -132,13 +133,15 @@ node('master') {
 
                 # Downloads the constraint-layouts files from Artifactory (Updated to current version 1/12/16)
                 # wget --auth-no-challenge --user=\${A_USER} --password=\${A_PASS} https://artifactory.visualtao.net/android-tmp/m2repository.tar.gz -O -| tar zfxv - -C "${ANDROID_HOME}/extras/"
+
+
+                 cat "${ANDROID_HOME}/licenses/android-sdk-license"
+                 cat "${ANDROID_HOME}/licenses/android-sdk-preview-license"
             """
         }
     }
 
  stage('building int Docker'){
-
-        //java = docker.build 'airdock/oraclejdk:1.8'
         docker.image("airdock/oraclejdk:1.8").inside("-e ANDROID_SDK_HOME=${GRADLE_USER_HOME}/android-sdk-linux -e ANDROID_HOME=${GRADLE_USER_HOME}/android-sdk-linux" ) {
             withCredentials([ // Use Jenkins credentials ID of artifactory
                 [$class: 'UsernamePasswordMultiBinding', credentialsId: 'ones-ai-android',usernameVariable: 'username', passwordVariable: 'password'],
@@ -146,7 +149,9 @@ node('master') {
                     stage('Gradle Clean'){
                         sh """
                         export HOME=$GRADLE_USER_HOME
+                        export GRADLE_HOME=$GRADLE_USER_HOME
                         #export JAVA_HOME="/srv/java/jdk"
+                        pwd
                         java -version
                         ./gradlew clean
                         """
