@@ -48,12 +48,12 @@ node('master') {
         }
     }
 
-    def cwd = pwd()
+    def cwd = "${JENKINS_HOME}"
     stage('Environement preparation'){
      // Build parameters
      NDK_VER="r12b"
      SDK_VER="r24.4.1"
-     GRADLE_USER_HOME="${HOME}/caches/.gradle"
+     GRADLE_USER_HOME="$cwd/caches/.gradle"
      NDK_DIR="${GRADLE_USER_HOME}/android-ndk-${NDK_VER}"
      ANDROID_HOME="${GRADLE_USER_HOME}/android-sdk-linux"
      SDK_TOOLS="${ANDROID_HOME}/tools"
