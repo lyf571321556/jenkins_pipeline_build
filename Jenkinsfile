@@ -120,6 +120,8 @@ node('master') {
         }
     }
 
+            BUILDFLAV = "default"
+            BUILDTYPE = "Debug"
  stage('building int Docker'){
         docker.image("airdock/oraclejdk:1.8").inside("-e ANDROID_SDK_HOME=${GRADLE_USER_HOME}/android-sdk-linux -e ANDROID_HOME=${GRADLE_USER_HOME}/android-sdk-linux" ) {
             withCredentials([ // Use Jenkins credentials ID of artifactory
