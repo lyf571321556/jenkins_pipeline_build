@@ -13,7 +13,7 @@ node('master') {
         try {
             echo "打印项目版本号：${BUILD_VERSION}"
 			echo '代码下载开始：'
-            checkout([$class: 'GitSCM', branches: [[name: 'refs/tags/${ONES_TAG}']], doGenerateSubmoduleConfigurations: false, submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'ones-ai-android', url: 'https://github.com/lyf571321556/jenkins_pipeline_build.git']]])
+            checkout([$class: 'GitSCM', branches: [[name: 'refs/tags/${ONES_TAG}']], doGenerateSubmoduleConfigurations: false, submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'ones-ai-android', url: 'git@github.com:BangWork/ones-ai-android.git']]])
 		}
         catch (exc) {
             echo '代码下载失败了, 请检查配置！'
