@@ -140,7 +140,8 @@ node('master') {
                         ./gradlew assembleRelease
                         ls
                         cd build
-                        ls
+                        pwd
+                        ls -a
                         """
                     }
 
