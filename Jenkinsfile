@@ -31,7 +31,7 @@ node('master') {
                 ls
                 pwd
                 cd app/build/outputs
-                gzip ../outputs/mapping android.zip
+                gzip ../outputs android.zip
                 ls
                 """
     		}
