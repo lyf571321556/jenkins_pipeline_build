@@ -137,59 +137,10 @@ node('master') {
                         # export JAVA_HOME="/srv/java/jdk"
                         pwd
                         java -version
-                        ./gradlew clean
-                        """
-                    }
-
-                    stage('Lint run') {
-                        sh """
-                            export HOME=$GRADLE_USER_HOME
-                            # export JAVA_HOME="/srv/java/jdk"
-                            # ./gradlew lint${BUILDFLAV}${BUILDTYPE} -x lint
-                            ./gradlew lint -x lint
-                        """
-                    }
-
-                    stage('Compilation'){
-                        sh """
-                            export FailedToMailList=$FailedToMailList
-                            echo '$FailedToMailList'
-                            echo '${FailedToMailList}'
-                            export HOME=$GRADLE_USER_HOME
-                            # export JAVA_HOME="/srv/java/jdk"
-                            # ./gradlew compile${BUILDFLAV}${BUILDTYPE}Sources -x lint
-                            ./gradlew compileSources -x lint
-                        """
-                    }
-
-                    stage('Unit Test') {
-                        sh """
-                            export HOME=$GRADLE_USER_HOME
-                            # export JAVA_HOME="/srv/java/jdk"
-                            # ./gradlew test${BUILDFLAV}${BUILDTYPE}UnitTest -x lint
-                            ./gradlew testUnitTest -x lint
-                        """
-                    }
-
-                    stage("Assembling apk"){
-                        sh """
-                        export HOME=$GRADLE_USER_HOME
-                        # export JAVA_HOME="/srv/java/jdk"
-                        VERSION=\$(git tag | grep '^[0-9]' | tail -1)
-                        # ./gradlew -DBUILD_FLAVOR=${BUILDFLAV} -DUSE_OLD_BUILD_PROCESS=false -DCORE_BRANCH=NONE -DVERSION_NAME='\$VERSION' -DBUILD_TYPE=${BUILDTYPE} -DGIT_BRANCH=origin/master -DANDROID_VIEWS_BRANCH= assemble${BUILDFLAV}${BUILDTYPE}
                         ./gradlew
                         """
                     }
 
-                    stage('Post steps'){
-                        sh """
-                            # Add libCore.so files to symbols.zip
-                            # find ${cwd}/Product-CoreSDK/obj/local -name libCore.so | zip -r ${cwd}/Product/build/outputs/symbols.zip -@
-
-                            # Remove unaligned apk's
-                            rm -f ${cwd}/Product/build/outputs/apk/*-unaligned.apk
-                        """
-                    }
                 }
         }
     }
