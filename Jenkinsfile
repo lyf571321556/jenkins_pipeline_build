@@ -132,7 +132,7 @@ node('master') {
                 ]){
                     stage('Gradle Clean'){
                         sh """
-                        yum -y install zip unzip
+                        apt-get install zip unzip
                         export HOME=$GRADLE_USER_HOME
                         export GRADLE_HOME=$GRADLE_USER_HOME
                         # export JAVA_HOME="/srv/java/jdk"
