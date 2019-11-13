@@ -15,7 +15,7 @@ node('master') {
             echo '清空构建目录：'
             sh """
             ls
-            rm -rf .
+            rm -rf *
             ls
             """
 			echo '代码下载开始：'
