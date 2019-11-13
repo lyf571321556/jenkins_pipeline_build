@@ -132,7 +132,8 @@ node('master') {
                 ]){
                     stage('Gradle Clean'){
                         sh """
-                        apt-get install zip unzip
+                        zip a.zip local.properties
+                        ls
                         export HOME=$GRADLE_USER_HOME
                         export GRADLE_HOME=$GRADLE_USER_HOME
                         # export JAVA_HOME="/srv/java/jdk"
