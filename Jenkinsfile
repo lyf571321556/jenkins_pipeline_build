@@ -148,12 +148,20 @@ node('master') {
                     }
 
                     stage('Compilation'){
+                     try {
                         sh """
                             export HOME=$GRADLE_USER_HOME
                             # export JAVA_HOME="/srv/java/jdk"
                             # ./gradlew compile${BUILDFLAV}${BUILDTYPE}Sources -x lint
                             ./gradlew compileSources -x lint
                         """
+                         }catch (exc) {
+                                    echo '构建失败了, 请检查配置！'
+                                    emailext body: "${env.EmailextBody_Failed}",
+                        			subject: "${JOB_NAME} - 版本${BUILD_VERSION}.${BUILD_NUMBER} - Failure!",
+                        			to: "${params.Maillist_Failed}"
+                                    sh 'exit 1'
+                                }
                     }
 
                     stage('Unit Test') {
@@ -188,42 +196,6 @@ node('master') {
         }
     }
 
-    stage ('构建'){
-        try {
-            sh 'gradle clean assembleDebug'
-		}
-        catch (exc) {
-            echo '构建失败了, 请检查配置！'
-            emailext body: "${env.EmailextBody_Failed}",
-			subject: "${JOB_NAME} - 版本${BUILD_VERSION}.${BUILD_NUMBER} - Failure!",
-			to: "${params.Maillist_Failed}"
-            sh 'exit 1'
-        }
-    }
-
-    stage('静态代码检查') {
-		try {
-			echo '静态代码检查开始：'
-			withSonarQubeEnv('sonarqube6.5') {
-				sh 'sonar-scanner ' +
-				"-Dsonar.projectKey=${env.JOB_NAME} " +
-				"-Dsonar.projectName=${env.JOB_NAME} " +
-				'-Dsonar.projectVersion=1.0 ' +
-				'-Dsonar.sources=app/src/ ' +
-				'-Dsonar.java.binaries=app/build/intermediates/classes ' +
-				'-Dsonar.java.libraries=app/libs/*.jar,E:/tools/android-sdk-windows/platforms/android-27/android.jar ' +
-				'-Dsonar.skipDesign=true ' +
-				'-Dsonar.sourceEncoding=UTF-8'
-			}
-		}
-		catch (exc) {
-            echo '静态代码检查失败了, 请检查配置！'
-            emailext body: "${env.EmailextBody_Failed}",
-			subject: "${JOB_NAME} - 版本${BUILD_VERSION}.${BUILD_NUMBER} - Failure!",
-			to: "${params.Maillist_Failed}"
-            sh 'exit 1'
-        }
-    }
 
     stage ('上传蒲公英'){
         try {
