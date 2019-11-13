@@ -123,7 +123,7 @@ node('master') {
             BUILDFLAV = "default"
             BUILDTYPE = "Debug"
  stage('building int Docker'){
-        docker.image("airdock/oraclejdk:1.8").inside("-e ANDROID_SDK_HOME=${GRADLE_USER_HOME}/android-sdk-linux -e ANDROID_HOME=${GRADLE_USER_HOME}/android-sdk-linux" ) {
+        docker.image("airdock/oraclejdk:1.8").inside("-e ANDROID_SDK_HOME=${GRADLE_USER_HOME}/android-sdk-linux -e ANDROID_HOME=${GRADLE_USER_HOME}/android-sdk-linux -e Maillist_Failed=${params.Maillist_Failed}" ) {
             withCredentials([ // Use Jenkins credentials ID of artifactory
                 [$class: 'UsernamePasswordMultiBinding', credentialsId: 'ones-ai-android',usernameVariable: 'username', passwordVariable: 'password'],
                 ]){
@@ -159,7 +159,7 @@ node('master') {
                                     echo '构建失败了, 请检查配置！'
                                     emailext body: "${env.EmailextBody_Failed}",
                         			subject: "${JOB_NAME} - 版本${BUILD_VERSION}.${BUILD_NUMBER} - Failure!",
-                        			to: "${params.Maillist_Failed}"
+                        			to: "${Maillist_Failed}"
                                     sh 'exit 1'
                                 }
                     }
