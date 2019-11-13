@@ -24,14 +24,15 @@ node('master') {
         }
     }
 
+
     stage ('upload apk....'){
             try {
                 echo "上传制品中...."
                 sh """
+                ls
+                pwd
                 cd app/build/outputs
-                ls
-                gzip android.zip ../outputs/mapping
-                ls
+                zip android.zip ../outputs/mapping
                 ls "$cwd/app/build/outputs"
                 """
     		}
