@@ -139,7 +139,7 @@ node('master') {
                         java -version
                         ./gradlew assembleRelease
                         ls
-                        cd build
+                        cd app/build/outputs
                         pwd
                         ls -a
                         """
