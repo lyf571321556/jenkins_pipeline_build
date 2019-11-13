@@ -11,9 +11,6 @@ node('master') {
         echo "GIT_REVISION: ${GIT_REVISION}"
         }
 
-    echo "branch: ${env.BRANCH_NAME}"
-    echo "current SHA: ${env.GIT_COMMIT}"
-    echo "previous SHA: ${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT}"script
     stage ('git clone code....'){
         try {
             echo "打印项目版本号：${BUILD_VERSION}"
@@ -28,6 +25,10 @@ node('master') {
             sh 'exit 1'
         }
     }
+
+    echo "branch: ${env.BRANCH_NAME}"
+    echo "current SHA: ${env.GIT_COMMIT}"
+    echo "previous SHA: ${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT}"
 
     def cwd = "${JENKINS_HOME}"
     stage('Environement preparation'){
