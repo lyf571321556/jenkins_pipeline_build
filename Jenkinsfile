@@ -170,6 +170,7 @@ node('master') {
                      try {
                         sh """
                             export Maillist_Failed=$Maillist_Failed
+                            echo '$Maillist_Failed'
                             export HOME=$GRADLE_USER_HOME
                             # export JAVA_HOME="/srv/java/jdk"
                             # ./gradlew compile${BUILDFLAV}${BUILDTYPE}Sources -x lint
