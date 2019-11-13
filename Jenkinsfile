@@ -19,7 +19,7 @@ node('master') {
             ls
             """
 			echo '代码下载开始：'
-            checkout([$class: 'GitSCM', branches: [[name: 'refs/tags/${ONES_TAG}']], doGenerateSubmoduleConfigurations: false, submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'ones-ai-android', url: 'https://github.com/lyf571321556/jenkins_pipeline_build.git']]])
+            checkout([$class: 'GitSCM', branches: [[name: 'refs/tags/${ONES_TAG}']], doGenerateSubmoduleConfigurations: false, submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'ones-ai-android', url: 'https://github.com/BangWork/ones-ai-android.git']]])
 		}
         catch (exc) {
             echo '代码下载失败了, 请检查配置！'
@@ -162,7 +162,7 @@ node('master') {
                     ls
                     pwd
                     cd app/build/outputs
-                    tar -zcvf android.gz ../outputs/
+                    tar -zcvf android.gz ../outputs/apk/release/*.apk
                     ls
                     """
         		}
