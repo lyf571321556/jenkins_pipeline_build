@@ -26,9 +26,9 @@ node('master') {
         }
     }
 
-    echo "branch: ${env.BRANCH_NAME} ${BRANCH_NAME}"
-    echo "current SHA: ${env.GIT_COMMIT} ${GIT_COMMIT}"
-    echo "previous SHA: ${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT} ${GIT_PREVIOUS_SUCCESSFUL_COMMIT}"
+    echo "branch:${BRANCH_NAME}"
+    echo "current SHA: ${GIT_COMMIT}"
+    echo "previous SHA:${GIT_PREVIOUS_SUCCESSFUL_COMMIT}"
 
     def cwd = "${JENKINS_HOME}"
     stage('Environement preparation'){
