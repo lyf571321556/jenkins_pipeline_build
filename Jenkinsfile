@@ -24,21 +24,12 @@ node('master') {
         }
     }
 
-    echo "branch:${env.branch}"
-    echo "branch:${env.buildingTag}"
-    echo "branch:${env.BRANCH_NAME}"
-    echo "current SHA:${env.GIT_COMMIT}"
-    echo "previous SHA: ${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT}"
-
-    def cwd = "${JENKINS_HOME}"
-
     stage ('upload apk....'){
             try {
                 echo "上传制品中...."
                 sh """
-                ls
                 cd app/build/outputs
-                zip android.zip ../outputs/mapping
+                gzip android.zip ../outputs/mapping
                 ls "$cwd/app/build/outputs"
                 """
     		}
