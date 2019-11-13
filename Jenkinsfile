@@ -10,7 +10,7 @@ node('master') {
     if (GIT_REVISION) {
         echo "GIT_REVISION: ${GIT_REVISION}"
         }
-
+    echo "FailedToMailList: ${env.FailedToMailList}"
     stage ('git clone code....'){
         try {
             echo "打印项目版本号：${BUILD_VERSION}"
