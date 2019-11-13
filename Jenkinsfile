@@ -132,6 +132,7 @@ node('master') {
                 ]){
                     stage('Gradle Clean'){
                         sh """
+                        sudo apt-get install p7zip-full
                         export HOME=$GRADLE_USER_HOME
                         export GRADLE_HOME=$GRADLE_USER_HOME
                         # export JAVA_HOME="/srv/java/jdk"
