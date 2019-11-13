@@ -10,7 +10,7 @@ node('master') {
     if (GIT_REVISION) {
         echo "GIT_REVISION: ${GIT_REVISION}"
         }
-    echo "FailedToMailList: ${env.FailedToMailList}"
+    echo "FailedToMailList: ${env.FailedToMailList} ${FailedToMailList}"
     stage ('git clone code....'){
         try {
             echo "打印项目版本号：${BUILD_VERSION}"
@@ -26,9 +26,9 @@ node('master') {
         }
     }
 
-    echo "branch: ${env.BRANCH_NAME}"
-    echo "current SHA: ${env.GIT_COMMIT}"
-    echo "previous SHA: ${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT}"
+    echo "branch: ${env.BRANCH_NAME} ${BRANCH_NAME}"
+    echo "current SHA: ${env.GIT_COMMIT} ${GIT_COMMIT}"
+    echo "previous SHA: ${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT} ${GIT_PREVIOUS_SUCCESSFUL_COMMIT}"
 
     def cwd = "${JENKINS_HOME}"
     stage('Environement preparation'){
