@@ -1,5 +1,24 @@
 node('master') {
+    properties([parameters([
+		string(defaultValue: 'liuyanfeng@ones.ai', description: '成功后邮件通知列表', name: 'Maillist_Success', trim: false),
+		string(defaultValue: 'liuyanfeng@ones.ai', description: '构建异常邮件通知列表', name: 'Maillist_Failed', trim: false),
+		text(defaultValue: '''<hr/>
+			(本邮件是程序自动下发的，请勿回复！)<br/><hr/>
+			很遗憾的通知这次执行失败啦，一定有哪里出了问题，还请点开构建日志仔细检查，或者跟管理员联系 <br/><hr/>
+			项目名称：$PROJECT_NAME<br/><hr/>
+			触发原因：${CAUSE}<br/><hr/>
 
+			构建流水线：<a href="http://0.0.0.0:8080/job/${JOB_NAME}">http://0.0.0.0:8080/job/${JOB_NAME}</a><br/><hr/>
+			构建日志地址：<a href="${BUILD_URL}console">${BUILD_URL}console</a><br/><hr/>
+			静测结果：<a href="http://0.0.0.0:9000/dashboard/index/${JOB_NAME}">http://0.0.0.0:9000/dashboard/index/${JOB_NAME}</a><br/><hr/>
+			变更集:${JELLY_SCRIPT,template="html"}<br/><hr/>''',
+			description: '构建异常邮件通知正文', name: 'EmailextBody_Failed'
+		),
+		string(defaultValue: 'xxxxx', description: '_api_key', name: 'Api_Key', trim: false),
+		string(defaultValue: 'https://www.pgyer.com/apiv2/app/upload', description: 'Pgyer_URL', name: 'Pgyer_URL', trim: false),
+		string(defaultValue: 'https://www.pgyer.com/app/qrcode/H9lA', description: 'Qrcode_URL', name: 'Qrcode_URL', trim: false),
+		string(defaultValue: "\\test2\\build\\outputs\\apk\\test2-debug.apk", description: 'Output_Dir', name: 'Output_Dir', trim: false)
+	])])
 	echo 'check代码获取主版本号'
         checkout([$class: 'GitSCM', branches: [[name: 'master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'ones-ai-android', url: 'https://github.com/lyf571321556/jenkins_pipeline_build.git']]])
 
@@ -150,6 +169,7 @@ node('master') {
                     stage('Compilation'){
                      try {
                         sh """
+                            export Maillist_Failed=$Maillist_Failed
                             export HOME=$GRADLE_USER_HOME
                             # export JAVA_HOME="/srv/java/jdk"
                             # ./gradlew compile${BUILDFLAV}${BUILDTYPE}Sources -x lint
