@@ -12,6 +12,8 @@ node('master') {
     stage ('git clone code....'){
         try {
             echo "打印项目版本号：${BUILD_VERSION}"
+            echo '清空构建目录：'
+            rm -rf .
 			echo '代码下载开始：'
             checkout([$class: 'GitSCM', branches: [[name: 'refs/tags/${ONES_TAG}']], doGenerateSubmoduleConfigurations: false, submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'ones-ai-android', url: 'git@github.com:BangWork/ones-ai-android.git']]])
 		}
