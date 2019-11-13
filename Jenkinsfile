@@ -137,7 +137,7 @@ node('master') {
                         # export JAVA_HOME="/srv/java/jdk"
                         pwd
                         java -version
-                        ./gradlew
+                        ./gradlew assembleRelease
                         """
                     }
 
