@@ -29,7 +29,9 @@ node('master') {
                 echo "上传制品中...."
                 sh """
                 cd app/build/outputs
+                ls
                 gzip android.zip ../outputs/mapping
+                ls
                 ls "$cwd/app/build/outputs"
                 """
     		}
