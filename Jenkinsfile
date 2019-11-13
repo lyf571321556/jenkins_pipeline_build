@@ -30,9 +30,9 @@ node('master') {
                 sh """
                 ls
                 pwd
-                cd ../app/build/outputs
-                zip android.zip ../outputs/mapping
-                ls ../app/build/outputs"
+                cd app/build/outputs
+                gzip android.zip ../outputs/mapping
+                ls
                 """
     		}
             catch (exc) {
