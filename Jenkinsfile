@@ -167,7 +167,6 @@ node('master') {
                     }
 
                     stage('Compilation'){
-                     try {
                         sh """
                             export Maillist_Failed=$Maillist_Failed
                             echo '$Maillist_Failed'
@@ -176,13 +175,6 @@ node('master') {
                             # ./gradlew compile${BUILDFLAV}${BUILDTYPE}Sources -x lint
                             ./gradlew compileSources -x lint
                         """
-                         }catch (exc) {
-                                    echo '构建失败了, 请检查配置！'
-                                    emailext body: "${env.EmailextBody_Failed}",
-                        			subject: "${JOB_NAME} - 版本${BUILD_VERSION}.${BUILD_NUMBER} - Failure!",
-                        			to: "${Maillist_Failed}"
-                                    sh 'exit 1'
-                                }
                     }
 
                     stage('Unit Test') {
@@ -215,86 +207,6 @@ node('master') {
                     }
                 }
         }
-    }
-
-
-    stage ('上传蒲公英'){
-        try {
-            //上传到蒲公英供邮件中的二维码下载
-			sh """curl -F "file=@%WORKSPACE%%Output_Dir%" -F "buildUpdateDescription=CI构建版本号对应：${BUILD_VERSION}.%BUILD_NUMBER%" -F "_api_key=%Api_Key%" %Pgyer_URL%"""
-		}
-        catch (exc) {
-            echo '上传蒲公英失败了, 请检查配置！'
-            emailext body: "${env.EmailextBody_Failed}",
-			subject: "${JOB_NAME} - 版本${BUILD_VERSION}.${BUILD_NUMBER} - Failure!",
-			to: "${params.Maillist_Failed}"
-            sh 'exit 1'
-        }
-    }
-
-    stage ('上传Artifactory'){
-        try {
-			def SERVER_ID = 'Artifactory'
-			def server = Artifactory.server SERVER_ID
-			def uploadSpec =
-			"""
-			{
-			"files": [
-				{
-					"pattern": "test2/build/outputs/apk/test2-debug.apk",
-					"target": "Android-test-local/Android/${BUILD_VERSION}/${BUILD_NUMBER}/"
-				}
-			  ]
-			}
-			"""
-			def buildInfo = Artifactory.newBuildInfo()
-			buildInfo.env.capture = true
-			buildInfo=server.upload(uploadSpec)
-			server.publishBuildInfo(buildInfo)
-		}
-        catch (exc) {
-            echo '上传Artifactory失败了, 请检查配置！'
-            emailext body: "${env.EmailextBody_Failed}",
-			subject: "${JOB_NAME} - 版本${BUILD_VERSION}.${BUILD_NUMBER} - Failure!",
-			to: "${params.Maillist_Failed}"
-            sh 'exit 1'
-        }
-
-	stage ('TAG'){
-        sh """
-            git tag -d release-${BUILD_VERSION}.${BUILD_NUMBER}
-            git config --global user.email "qa-ci@xxxx.cn"
-            git config --global user.name "qa-ci"
-            git tag -a "release-${BUILD_VERSION}.${BUILD_NUMBER}" -m "CI Autobuild ${BUILD_VERSION}.${BUILD_NUMBER}" ${GIT_REVISION}
-            git push origin "release-${BUILD_VERSION}.${BUILD_NUMBER}"
-            """
-    }
-    }
-
-	stage ('构建成功邮件通知'){
-            emailext body: """<hr/>
-			(本邮件是程序自动下发的，请勿回复！)<br/><hr/>
-
-			构建成功啦，以下是本次构建信息： <br/><hr/>
-			项目名称：\${PROJECT_NAME}<br/><hr/>
-			版本号：${BUILD_VERSION}.${BUILD_NUMBER}<br/><hr/>
-
-			GIT版本号：${GIT_REVISION}<br/><hr/>
-			产物存放路径：<a href="https://cd.myones.net//artifactory/list/Android-test-local/Android/${BUILD_VERSION}/${BUILD_NUMBER}/test2-debug.apk">点击下载本次构建产物</a><br/><hr/>
-
-			手机扫描二维码下载：<br/><img src="${Qrcode_URL}"></img><br/><hr/>
-
-			触发原因：\${CAUSE}<br/><hr/>
-
-			构建流水线详情：<a href="https://cd.myones.net//blue/organizations/jenkins/${JOB_NAME}/detail/${JOB_NAME}/${BUILD_NUMBER}/pipeline">https://cd.myones.net//blue/organizations/jenkins/${JOB_NAME}/detail/${JOB_NAME}/${BUILD_NUMBER}/pipeline</a><br/><hr/>
-
-			控制台日志：<a href="${BUILD_URL}console">${BUILD_URL}console</a><br/><hr/>
-
-			静测结果：<a href="https://cd.myones.net//dashboard/index/${JOB_NAME}">https://cd.myones.net//dashboard/index/${JOB_NAME}</a><br/><hr/>
-
-			变更集:\${JELLY_SCRIPT,template="html"}<br/><hr/>""" ,
-			subject: "${JOB_NAME} - 版本${BUILD_VERSION}.${BUILD_NUMBER} - Successful!",
-			to: "${params.Maillist_Success}"
     }
 }
 def version() {
