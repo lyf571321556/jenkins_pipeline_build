@@ -10,7 +10,6 @@ node('master') {
     if (GIT_REVISION) {
         echo "GIT_REVISION: ${GIT_REVISION}"
         }
-    echo "FailedToMailList: ${env.FailedToMailList} ${FailedToMailList}"
     stage ('git clone code....'){
         try {
             echo "打印项目版本号：${BUILD_VERSION}"
@@ -126,7 +125,7 @@ node('master') {
             BUILDFLAV = "default"
             BUILDTYPE = "Debug"
  stage('building int Docker'){
-        docker.image("airdock/oraclejdk:1.8").inside("-e ANDROID_SDK_HOME=${GRADLE_USER_HOME}/android-sdk-linux -e ANDROID_HOME=${GRADLE_USER_HOME}/android-sdk-linux -e FailedToMailList=${params.FailedToMailList}" ) {
+        docker.image("airdock/oraclejdk:1.8").inside("-e ANDROID_SDK_HOME=${GRADLE_USER_HOME}/android-sdk-linux -e ANDROID_HOME=${GRADLE_USER_HOME}/android-sdk-linux" ) {
             withCredentials([ // Use Jenkins credentials ID of artifactory
                 [$class: 'UsernamePasswordMultiBinding', credentialsId: 'ones-ai-android',usernameVariable: 'username', passwordVariable: 'password'],
                 ]){
