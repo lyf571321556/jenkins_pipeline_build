@@ -159,7 +159,7 @@ node('master') {
                 try {
                     echo "上传制品中...."
                     sh """
-                    export GITHUB_TOKEN='5d864c73e7621beef61268e1cb114662fd6ba495'
+                    echo 'GITHUB_TOKEN:----${GITHUB_TOKEN}----'
                     ls
                     pwd
                     # apk/release/*.apk
