@@ -162,7 +162,8 @@ node('master') {
                     export GITHUB_TOKEN='7fc7e6d5a72c0cbcf2a21c3a74d6ed61ddd034d2'
                     ls
                     pwd
-                    tar -zcvf 'ones_release_{ONES_TAG}_build${BUILD_VERSION}'.gz ../app/build/outputs/apk/release/*.apk
+                    # apk/release/*.apk
+                    tar -zcvf 'ones_release_{ONES_TAG}_build${BUILD_VERSION}'.gz ../app/build/outputs/*
                     ls
                      ./github-release upload --user lyf571321556 --repo jenkins_pipeline_build --tag '{ONES_TAG}' --name 'ones_release_{ONES_TAG}_build${BUILD_VERSION}.gz' --file 'ones_release_{ONES_TAG}_build${BUILD_VERSION}'.gz
                     """
