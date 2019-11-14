@@ -159,13 +159,14 @@ node('master') {
                 try {
                     echo "上传制品中...."
                     sh """
-                    export GITHUB_TOKEN='7fc7e6d5a72c0cbcf2a21c3a74d6ed61ddd034d2'
+                    export GITHUB_TOKEN='1599b688b1d44eb2fe7b0ae5f3fb1c3fc17732e3'
                     ls
                     pwd
                     # apk/release/*.apk
                     tar -zcvf 'ones_release_${ONES_TAG}_build${BUILD_VERSION}'.gz app/build/outputs/*
                     ls
-                     ./github-release upload --user lyf571321556 --repo jenkins_pipeline_build --tag '${ONES_TAG}' --name 'ones_release_${ONES_TAG}_build${BUILD_VERSION}.gz' --file 'ones_release_${ONES_TAG}_build${BUILD_VERSION}'.gz
+                    ./github-release release --user lyf571321556 --repo jenkins_pipeline_build --tag '${ONES_TAG}' --pre-release
+                    ./github-release upload --user lyf571321556 --repo jenkins_pipeline_build --tag '${ONES_TAG}' --name 'ones_release_${ONES_TAG}_build${BUILD_VERSION}.gz' --file 'ones_release_${ONES_TAG}_build${BUILD_VERSION}'.gz
                     """
         		}
                 catch (exc) {
