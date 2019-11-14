@@ -30,13 +30,6 @@ node('master') {
         }
     }
 
-    stage("github-release download"){
-        sh """
-        ls
-        ./github-release
-        """
-    }
-
     echo "branch:${env.branch}"
     echo "branch:${env.buildingTag}"
     echo "branch:${env.BRANCH_NAME}"
@@ -162,15 +155,16 @@ node('master') {
         }
     }
 
-    stage ('upload apk....'){
+    stage ('github-release upload'){
                 try {
                     echo "上传制品中...."
                     sh """
+                    export GITHUB_TOKEN='7fc7e6d5a72c0cbcf2a21c3a74d6ed61ddd034d2'
                     ls
                     pwd
-                    cd app/build/outputs
-                    tar -zcvf android.gz ../outputs/apk/release/*.apk
+                    tar -zcvf 'ones_release_{ONES_TAG}_build${BUILD_VERSION}'.gz ../app/build/outputs/apk/release/*.apk
                     ls
+                     ./github-release upload --user lyf571321556 --repo jenkins_pipeline_build --tag '{ONES_TAG}' --name "ones_release_{ONES_TAG}_build${BUILD_VERSION}.gz" --file 'ones_release_{ONES_TAG}_build${BUILD_VERSION}'.gz
                     """
         		}
                 catch (exc) {
