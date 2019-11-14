@@ -36,12 +36,13 @@ node('master') {
         try{
             echo "check release  corresponding to tag ${ONES_TAG}...."
              sh """
-             github-release info  -u lyf571321556 -r jenkins_pipeline_build  --tag '${ONES_TAG}'
-                """
+              ./github-release info  -u lyf571321556 -r jenkins_pipeline_build  --tag '${ONES_TAG}'
+             """
+             echo "find the release corresponding to tag ${ONES_TAG},"
         }catch (exc) {
          echo "could not find the release corresponding to tag ${ONES_TAG}"
          echo "create release  corresponding to tag ${ONES_TAG}...."
-             sh """
+            sh """
             ./github-release release --user lyf571321556 --repo jenkins_pipeline_build --tag '${ONES_TAG}' --pre-release
             """
         }
