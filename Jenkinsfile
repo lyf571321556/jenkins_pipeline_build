@@ -131,12 +131,12 @@ node('master') {
 
             BUILDFLAV = "default"
             BUILDTYPE = "Debug"
- stage('building int Docker'){
+ stage('start container'){
         docker.image("airdock/oraclejdk:1.8").inside("-e ANDROID_SDK_HOME=${GRADLE_USER_HOME}/android-sdk-linux -e ANDROID_HOME=${GRADLE_USER_HOME}/android-sdk-linux" ) {
             withCredentials([ // Use Jenkins credentials ID of artifactory
                 [$class: 'UsernamePasswordMultiBinding', credentialsId: 'ones-ai-android',usernameVariable: 'username', passwordVariable: 'password'],
                 ]){
-                    stage('Gradle Clean'){
+                    stage('build apk'){
                         sh """
                         export HOME=$GRADLE_USER_HOME
                         export GRADLE_HOME=$GRADLE_USER_HOME
@@ -163,7 +163,7 @@ node('master') {
                     ls
                     pwd
                     # apk/release/*.apk
-                    tar -zcvf 'ones_release_${ONES_TAG}_build${BUILD_VERSION}'.gz /app/build/outputs/*
+                    tar -zcvf 'ones_release_${ONES_TAG}_build${BUILD_VERSION}'.gz app/build/outputs/*
                     ls
                      ./github-release upload --user lyf571321556 --repo jenkins_pipeline_build --tag '${ONES_TAG}' --name 'ones_release_${ONES_TAG}_build${BUILD_VERSION}.gz' --file 'ones_release_${ONES_TAG}_build${BUILD_VERSION}'.gz
                     """
