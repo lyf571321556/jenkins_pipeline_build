@@ -43,7 +43,7 @@ node('master') {
          echo "could not find the release corresponding to tag ${ONES_TAG}"
          echo "create release  corresponding to tag ${ONES_TAG}...."
             sh """
-            ./github-release release --user lyf571321556 --repo jenkins_pipeline_build --tag '${ONES_TAG}' --pre-release
+            ./github-release release --user lyf571321556 --repo jenkins_pipeline_build --tag '${ONES_TAG}' --draft
             """
         }
     }
