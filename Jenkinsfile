@@ -159,8 +159,8 @@ node('master') {
     stage ('github-release upload'){
                 try {
                     echo "上传制品中...."
-                    sh """
                     echo 'GITHUB_TOKEN:----${GITHUB_TOKEN}----'
+                    sh """
                     ls
                     pwd
                     # apk/release/*.apk
