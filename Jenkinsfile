@@ -31,6 +31,22 @@ node('master') {
         }
     }
 
+
+    stage ('check or create release  corresponding to tag ${ONES_TAG}'){
+        try{
+            echo "check release  corresponding to tag ${ONES_TAG}...."
+             sh """
+             github-release info  -u lyf571321556 -r jenkins_pipeline_build  --tag '${ONES_TAG}'
+                """
+        }catch (exc) {
+         echo "could not find the release corresponding to tag ${ONES_TAG}"
+         echo "create release  corresponding to tag ${ONES_TAG}...."
+             sh """
+            ./github-release release --user lyf571321556 --repo jenkins_pipeline_build --tag '${ONES_TAG}' --pre-release
+            """
+        }
+    }
+
     echo "branch:${env.branch}"
     echo "branch:${env.buildingTag}"
     echo "branch:${env.BRANCH_NAME}"
@@ -166,7 +182,6 @@ node('master') {
                     # apk/release/*.apk
                     tar -zcvf 'ones_release_${ONES_TAG}_build${BUILD_VERSION}'.gz app/build/outputs/*
                     ls
-                    ./github-release release --user lyf571321556 --repo jenkins_pipeline_build --tag '${ONES_TAG}' --pre-release
                     ./github-release upload --user lyf571321556 --repo jenkins_pipeline_build --tag '${ONES_TAG}' --name 'ones_release_${ONES_TAG}_build${BUILD_VERSION}.gz' --file 'ones_release_${ONES_TAG}_build${BUILD_VERSION}'.gz
                     """
         		}
