@@ -13,7 +13,7 @@ node('master') {
         try {
             echo "打印项目版本号：${BUILD_VERSION}"
             echo '清空构建目录：'
-            echo 'GITHUB_TOKEN:----${GITHUB_TOKEN}----'
+            echo "GITHUB_TOKEN:----${GITHUB_TOKEN}----"
             sh """
             ls
             rm -rf *
