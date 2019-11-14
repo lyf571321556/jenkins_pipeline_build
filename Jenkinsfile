@@ -163,7 +163,7 @@ node('master') {
                     ls
                     pwd
                     # apk/release/*.apk
-                    tar -zcvf 'ones_release_${ONES_TAG}_build${BUILD_VERSION}'.gz ../app/build/outputs
+                    tar -zcvf 'ones_release_${ONES_TAG}_build${BUILD_VERSION}'.gz /app/build/outputs/*
                     ls
                      ./github-release upload --user lyf571321556 --repo jenkins_pipeline_build --tag '${ONES_TAG}' --name 'ones_release_${ONES_TAG}_build${BUILD_VERSION}.gz' --file 'ones_release_${ONES_TAG}_build${BUILD_VERSION}'.gz
                     """
