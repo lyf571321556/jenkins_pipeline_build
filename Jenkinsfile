@@ -9,7 +9,7 @@ node('master') {
         echo "GIT_REVISION: ${GIT_REVISION}"
         }
 
-    stage(""){
+    stage("github-release download"){
         sh """
         wget -o github-release.zip https://github-production-release-asset-2e65be.s3.amazonaws.com/16349521/d6f76c74-1660-11e7-9b03-f334e9a4733a?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20191114%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20191114T041441Z&X-Amz-Expires=300&X-Amz-Signature=b34ad4fdd91b67ab1d53c66972afdc85cf041cf044589e9d23ed98a55afa90fc&X-Amz-SignedHeaders=host&actor_id=2295872&response-content-disposition=attachment%3B%20filename%3Dlinux-amd64-github-release.tar.bz2&response-content-type=application%2Foctet-stream
         tar -zxvf github-release.zip
