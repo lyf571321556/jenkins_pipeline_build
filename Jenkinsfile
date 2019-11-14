@@ -54,7 +54,7 @@ node('master') {
                 export PATH="\$PATH:${GRADLE_USER_HOME}:${NDK_DIR}:${ANDROID_HOME}:${SDK_TOOLS}:${SDK_TOOLS}/bin:${AAPT}"
 
                 # Checking that Android SDK and NDK are installed
-                # rm -rf ${GRADLE_USER_HOME}
+                rm -rf ${GRADLE_USER_HOME}
                 mkdir -p ${GRADLE_USER_HOME}
                 if [ ! -f "${GRADLE_USER_HOME}/android-sdk-${SDK_VER}-linux.tgz" ]; then
                     curl -o "${GRADLE_USER_HOME}/android-sdk-${SDK_VER}-linux.tgz" https://dl.google.com/android/android-sdk_${SDK_VER}-linux.tgz
